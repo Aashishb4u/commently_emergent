@@ -1,0 +1,139 @@
+{
+  "typography": {
+    "strategy": "Corporate/Enterprise 'Old Money Tech' variant. Clean, authoritative, highly legible in dense environments.",
+    "fonts": {
+      "heading": "IBM Plex Sans",
+      "body": "IBM Plex Sans",
+      "mono": "IBM Plex Mono"
+    },
+    "hierarchy": {
+      "h1": "text-2xl sm:text-3xl font-bold tracking-tight text-slate-900",
+      "h2": "text-xl sm:text-2xl font-semibold tracking-tight text-slate-800",
+      "h3": "text-lg font-medium text-slate-800",
+      "body": "text-sm text-slate-600 leading-relaxed",
+      "label": "text-xs font-semibold uppercase tracking-[0.1em] text-slate-500",
+      "tiny": "text-[11px] text-slate-400"
+    },
+    "rules": [
+      "NEVER use generic fonts like Inter, Roboto, or Open Sans for headings.",
+      "Always use tight letter spacing (tracking-tight) for headings above 18px.",
+      "Labels must be uppercase with wide tracking.",
+      "Use explicit text color on hover states."
+    ]
+  },
+  "colors": {
+    "archetype": "ORGANIC & EARTHY mixed with SWISS HIGH-CONTRAST for a LinkedIn-native feel with an elite edge.",
+    "palette": {
+      "background": "#FFFFFF",
+      "surface": "#F3F2EF", 
+      "primary": "#0A66C2",
+      "primary_hover": "#004182",
+      "secondary": "#E8E6DF",
+      "text_main": "#191919",
+      "text_muted": "#666666",
+      "border": "#E0DFDC",
+      "success": "#057642",
+      "error": "#CC1016",
+      "ai_accent": "#4338CA" 
+    },
+    "rules": [
+      "Tinted Grey Rule: Greys should subtly tint towards the LinkedIn background hue (#F3F2EF) rather than pure monochrome.",
+      "No full-screen gradients. Keep surfaces flat or use subtle crisp shadows.",
+      "Strict contrast requirements: minimum 4.5:1 for normal text.",
+      "AI moments should use ai_accent very sparingly (e.g., an 'AI-generated' badge border or text)."
+    ]
+  },
+  "visual_enhancers": {
+    "surface_strategy": "Neumorphism (The 'Tactile' Variant) - 'Clay & Crisp'. Mix soft shadows with sharp inner contrasts.",
+    "shadows": {
+      "sm": "shadow-[0_1px_2px_rgba(0,0,0,0.05)]",
+      "md": "shadow-[0_4px_12px_rgba(0,0,0,0.08)]",
+      "lg": "shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+    },
+    "borders": "Always use a sharp 1px border (border-black/5 or border-[#E0DFDC]) to ground elements. Never rely solely on shadows.",
+    "radii": {
+      "sm": "rounded-sm",
+      "md": "rounded-md",
+      "lg": "rounded-lg",
+      "full": "rounded-full"
+    }
+  },
+  "component_specs": {
+    "side_panel": {
+      "width": "w-full max-w-[400px]",
+      "layout": "flex flex-col h-screen bg-white overflow-y-auto overflow-x-hidden",
+      "header": "sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-black/5 px-4 py-3 flex items-center justify-between"
+    },
+    "injected_inline_button": {
+      "description": "Button injected into LinkedIn DOM next to posts.",
+      "classes": "inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold text-slate-600 hover:text-slate-900 bg-transparent hover:bg-black/5 rounded-md transition-colors border border-transparent hover:border-black/5",
+      "icon": "✨",
+      "data_testid": "injected-generate-comment-btn"
+    },
+    "post_preview_card": {
+      "container": "bg-[#F3F2EF] p-4 rounded-md border border-black/5 shadow-sm space-y-2 mt-4",
+      "author": "text-sm font-semibold text-slate-900",
+      "snippet": "text-sm text-slate-600 line-clamp-3 italic border-l-2 border-[#0A66C2] pl-2"
+    },
+    "tone_selector": {
+      "container": "flex flex-wrap gap-2 mt-4",
+      "chip_default": "px-3 py-1.5 rounded-full text-xs font-medium border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer",
+      "chip_selected": "px-3 py-1.5 rounded-full text-xs font-medium border border-[#0A66C2] bg-[#0A66C2]/10 text-[#0A66C2] transition-all cursor-pointer shadow-sm"
+    },
+    "comment_output_area": {
+      "container": "relative mt-4",
+      "textarea": "w-full min-h-[120px] p-4 pt-8 rounded-md border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0A66C2]/20 focus:border-[#0A66C2] resize-y shadow-sm transition-all",
+      "badge": "absolute top-2 left-2 bg-[#4338CA]/10 text-[#4338CA] px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-[#4338CA]/20"
+    },
+    "primary_button": {
+      "classes": "w-full py-2.5 bg-[#0A66C2] hover:bg-[#004182] text-white rounded-full font-semibold text-sm transition-colors shadow-sm mt-6 flex justify-center items-center gap-2",
+      "loading_state": "opacity-80 cursor-not-allowed"
+    }
+  },
+  "grids_and_layouts": {
+    "spacing_system": "Dense but legible. Side panels require efficient use of space. Use p-4 for standard containers, gap-4 for vertical stacks.",
+    "alignment": "Left-align dense text and controls. Center-align primary CTAs or empty states.",
+    "empty_state": "flex flex-col items-center justify-center p-8 text-center h-64 border border-dashed border-slate-300 rounded-lg bg-slate-50 mt-4"
+  },
+  "motion": {
+    "hover": "Subtle transform (-translate-y-[1px]) and shadow increase for interactive cards.",
+    "buttons": "transition-all duration-200 ease-in-out hover:brightness-95 active:scale-[0.98]",
+    "entrance": "Staggered fade-in (opacity 0 to 1, translate-y 4px to 0) for panel load.",
+    "toast": "Use sonner with a bottom-center placement, sliding in from bottom."
+  },
+  "accessibility": {
+    "contrast": "Ensure all text, including placeholders, meets APCA/WCAG standards against its background.",
+    "focus": "All interactive elements must have focus:ring-2 focus:ring-[#0A66C2] focus:ring-offset-1 focus:outline-none.",
+    "aria": "Use aria-live='polite' for the comment generation output area."
+  },
+  "media_and_icons": {
+    "icons": {
+      "library": "lucide-react",
+      "style": "Stroke width 1.5, size 16px for inline, 20px for standalone actions."
+    },
+    "images": "No external images required. Rely on UI aesthetics, typography, and clear iconography."
+  },
+  "instructions_to_main_agent": [
+    "Build out the frontend as a React app capable of building into a Chrome Extension.",
+    "Main UI lives in the side panel. Provide your React components using .js or .jsx extensions (NOT .tsx, as specified).",
+    "Ensure the DOM injected button has a completely insulated CSS scope or pure inline styles/Tailwind classes that don't clash with LinkedIn's global CSS.",
+    "Use Shadcn UI components for complex interactions like Sliders or Selects, but style them precisely according to the specs above.",
+    "Ensure all data-testids are in place for key elements (e.g., data-testid='generate-btn', data-testid='tone-selector').",
+    "Never use full transparent backgrounds in dropdowns/selects; ensure all overlays have a solid background (e.g., bg-white) with sharp borders."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "You tend to converge toward generic, 'on distribution' outputs. In frontend design, this creates what users call the 'AI slop' aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy and Neumorphic tactile borders.",
+    "You MUST NOT apply universal transition. Eg: transition: all. This results in breaking transforms.",
+    "You MUST NOT center align the app container, ie do not add .App { text-align: center; } in the css file.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style.",
+    "NEVER use AI assistant Emoji characters like 🤖🧠💭💡🔮🎯 etc for icons. Use lucide-react icons.",
+    "Every interaction needs micro-animations - hover states, transitions, and entrance animations.",
+    "Subtle grain textures, custom selection states, and loading skeletons separate good from extraordinary.",
+    "Prioritize using pre-existing components from src/components/ui when applicable.",
+    "Use sonner for toast notifications.",
+    "All interactive and key informational elements MUST include a data-testid attribute in kebab-case format."
+  ]
+}
