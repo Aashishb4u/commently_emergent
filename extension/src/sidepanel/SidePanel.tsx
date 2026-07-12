@@ -294,7 +294,7 @@ function Header(props: {
         <div className="min-w-0">
           <div className="font-semibold text-sm tracking-tight truncate">Comment Assistant</div>
           <div className="text-[10px] uppercase tracking-[0.14em] text-li-muted">
-            Claude Sonnet 4.5
+            OpenAI · GPT-5.4
           </div>
         </div>
       </div>
@@ -558,7 +558,7 @@ function SettingsPanel(props: {
           className="w-full p-2 text-sm bg-white border border-li-border rounded-md focus:outline-none focus:ring-2 focus:ring-li-primary/20 focus:border-li-primary"
         />
         <p className="text-[10px] text-li-muted mt-1">
-          Where the AI proxy lives. Never enter your Anthropic key here — it stays on the backend.
+          Where the AI proxy lives. Never enter your OpenAI key here — it stays on the backend.
         </p>
       </div>
 

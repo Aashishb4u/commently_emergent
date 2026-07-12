@@ -179,7 +179,7 @@ function App() {
           <ol className="grid md:grid-cols-4 gap-6" data-testid="workflow-steps">
             {[
               ["Detect posts", "Content script watches the feed via a dedicated LinkedIn DOM adapter."],
-              ["Draft comment", "Backend proxies Claude Sonnet 4.5 — your API key never touches the browser."],
+              ["Draft comment", "Backend proxies OpenAI GPT-5.4 — your API key never touches the browser."],
               ["Review & edit", "Suggestions appear in the side panel with an AI-generated badge. Edit freely."],
               ["Approve & post", "One-click insert into LinkedIn's own reply box. You always press Post."],
             ].map(([title, body], i) => (
@@ -217,7 +217,7 @@ function App() {
             ["Download & unzip", "Click the Download button at the top of this page to get linkedin-comment-assistant.zip, then unzip it anywhere on your computer."],
             ["Open Chrome extensions", "Go to chrome://extensions and toggle Developer mode on (top-right)."],
             ["Load unpacked", 'Click "Load unpacked" and select the unzipped folder (the one containing manifest.json).'],
-            ["Configure the API key", "On the sandbox, edit /app/backend/.env to set ANTHROPIC_API_KEY=sk-ant-... then run sudo supervisorctl restart backend."],
+            ["Configure the API key", "On the sandbox, edit /app/backend/.env to set OPENAI_API_KEY=sk-... then run sudo supervisorctl restart backend."],
             ["Use it on LinkedIn", "Sign in to LinkedIn normally, open your feed, and click ✦ Suggest comment next to any post — or open the side panel from the Chrome toolbar."],
           ].map(([step, body], i) => (
             <div key={step} className="flex gap-4" data-testid={`install-step-${i + 1}`}>
@@ -237,7 +237,7 @@ function App() {
       <footer className="border-t border-black/5">
         <div className="max-w-6xl mx-auto px-6 py-8 flex flex-wrap items-center justify-between gap-3 text-xs text-li-muted">
           <span>
-            Built with FastAPI + Claude Sonnet 4.5. Uses your existing LinkedIn
+            Built with FastAPI + OpenAI GPT-5.4. Uses your existing LinkedIn
             session — never stores credentials.
           </span>
           <span className="font-mono">v1.0.0</span>
@@ -264,7 +264,7 @@ function BackendBadge({ health }) {
       </span>
     );
   }
-  const configured = health.data?.anthropic_configured;
+  const configured = health.data?.ai_configured;
   return (
     <span
       className={`inline-flex items-center gap-1.5 font-semibold ${configured ? "text-li-success" : "text-li-error"}`}

@@ -48,6 +48,7 @@ export interface GenerateCommentResult {
 export interface HealthResult {
   status: string;
   model: string;
-  anthropic_configured: boolean;
+  provider: string;
+  ai_configured: boolean;
   timestamp: string;
 }

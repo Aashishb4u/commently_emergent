@@ -1,8 +1,8 @@
 """
 LinkedIn Comment Assistant — Backend Proxy
 ==========================================
-Secure FastAPI backend that proxies Claude Sonnet 4.5 calls for the Chrome
-extension. Keeps the Anthropic API key off the client bundle.
+Secure FastAPI backend that proxies OpenAI GPT calls for the Chrome
+extension. Keeps the OpenAI API key off the client bundle.
 
 Endpoints (all prefixed with /api):
     GET  /api/health
@@ -15,11 +15,11 @@ import os
 from datetime import datetime, timezone
 from typing import Literal, Optional
 
-from anthropic import Anthropic, APIError
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
+from openai import OpenAI, OpenAIError
 from pydantic import BaseModel, Field, field_validator
 
 load_dotenv()
@@ -35,32 +35,32 @@ logger = logging.getLogger("linkedin-comment-assistant")
 # ---------------------------------------------------------------------------
 MONGO_URL = os.environ["MONGO_URL"]
 DB_NAME = os.environ["DB_NAME"]
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
-CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-5-20250929")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.4")
 ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "*")
 
-# Mongo (used only for anonymous usage counter / logs — no PII stored)
+# Mongo (used only for anonymous usage counter — no PII stored)
 mongo_client = AsyncIOMotorClient(MONGO_URL)
 db = mongo_client[DB_NAME]
 
-# Anthropic client (lazy — allows server to boot without key so the health
+# OpenAI client (lazy — allows server to boot without key so the health
 # endpoint still responds; requests fail loudly if the key is missing).
-_anthropic_client: Optional[Anthropic] = None
+_openai_client: Optional[OpenAI] = None
 
 
-def get_anthropic() -> Anthropic:
-    global _anthropic_client
-    if not ANTHROPIC_API_KEY or ANTHROPIC_API_KEY.startswith("REPLACE_"):
+def get_openai() -> OpenAI:
+    global _openai_client
+    if not OPENAI_API_KEY or OPENAI_API_KEY.startswith("REPLACE_"):
         raise HTTPException(
             status_code=503,
             detail=(
-                "Anthropic API key is not configured on the backend. "
-                "Add ANTHROPIC_API_KEY to /app/backend/.env and restart."
+                "OpenAI API key is not configured on the backend. "
+                "Add OPENAI_API_KEY to /app/backend/.env and restart."
             ),
         )
-    if _anthropic_client is None:
-        _anthropic_client = Anthropic(api_key=ANTHROPIC_API_KEY)
-    return _anthropic_client
+    if _openai_client is None:
+        _openai_client = OpenAI(api_key=OPENAI_API_KEY)
+    return _openai_client
 
 
 # ---------------------------------------------------------------------------
@@ -68,7 +68,7 @@ def get_anthropic() -> Anthropic:
 # ---------------------------------------------------------------------------
 app = FastAPI(
     title="LinkedIn Comment Assistant API",
-    version="1.0.0",
+    version="1.1.0",
     docs_url="/api/docs",
     openapi_url="/api/openapi.json",
 )
@@ -119,7 +119,8 @@ class GenerateCommentResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: str
     model: str
-    anthropic_configured: bool
+    provider: str
+    ai_configured: bool
     timestamp: str
 
 
@@ -129,6 +130,7 @@ class DefaultsResponse(BaseModel):
     default_tone: Tone
     default_length: Length
     model: str
+    provider: str
 
 
 # ---------------------------------------------------------------------------
@@ -177,8 +179,9 @@ def build_user_prompt(post_text: str, author_name: Optional[str]) -> str:
 async def health() -> HealthResponse:
     return HealthResponse(
         status="ok",
-        model=CLAUDE_MODEL,
-        anthropic_configured=bool(ANTHROPIC_API_KEY and not ANTHROPIC_API_KEY.startswith("REPLACE_")),
+        model=OPENAI_MODEL,
+        provider="openai",
+        ai_configured=bool(OPENAI_API_KEY and not OPENAI_API_KEY.startswith("REPLACE_")),
         timestamp=datetime.now(timezone.utc).isoformat(),
     )
 
@@ -190,13 +193,14 @@ async def defaults() -> DefaultsResponse:
         lengths=["short", "medium", "long"],
         default_tone="professional",
         default_length="medium",
-        model=CLAUDE_MODEL,
+        model=OPENAI_MODEL,
+        provider="openai",
     )
 
 
 @app.post("/api/generate-comment", response_model=GenerateCommentResponse)
 async def generate_comment(payload: GenerateCommentRequest, request: Request) -> GenerateCommentResponse:
-    client = get_anthropic()
+    client = get_openai()
 
     system_prompt = build_system_prompt(payload.tone, payload.length, payload.custom_instructions)
     user_prompt = build_user_prompt(payload.post_text, payload.author_name)
@@ -204,20 +208,19 @@ async def generate_comment(payload: GenerateCommentRequest, request: Request) ->
     max_tokens = {"short": 80, "medium": 180, "long": 320}[payload.length]
 
     try:
-        message = client.messages.create(
-            model=CLAUDE_MODEL,
-            max_tokens=max_tokens,
-            system=system_prompt,
-            messages=[{"role": "user", "content": user_prompt}],
-            temperature=0.7,
+        completion = client.chat.completions.create(
+            model=OPENAI_MODEL,
+            max_completion_tokens=max_tokens,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
         )
-    except APIError as exc:
-        logger.exception("Anthropic API error")
+    except OpenAIError as exc:
+        logger.exception("OpenAI API error")
         raise HTTPException(status_code=502, detail=f"AI provider error: {exc}") from exc
 
-    # Extract text (Anthropic returns a list of content blocks)
-    text_parts = [b.text for b in message.content if getattr(b, "type", "") == "text"]
-    comment = "".join(text_parts).strip().strip('"').strip()
+    comment = (completion.choices[0].message.content or "").strip().strip('"').strip()
     if not comment:
         raise HTTPException(status_code=502, detail="AI provider returned empty output")
 
@@ -227,7 +230,8 @@ async def generate_comment(payload: GenerateCommentRequest, request: Request) ->
             {
                 "tone": payload.tone,
                 "length": payload.length,
-                "model": CLAUDE_MODEL,
+                "model": OPENAI_MODEL,
+                "provider": "openai",
                 "ts": datetime.now(timezone.utc).isoformat(),
                 "ua": request.headers.get("user-agent", "")[:200],
             }
@@ -237,7 +241,7 @@ async def generate_comment(payload: GenerateCommentRequest, request: Request) ->
 
     return GenerateCommentResponse(
         comment=comment,
-        model=CLAUDE_MODEL,
+        model=OPENAI_MODEL,
         tone=payload.tone,
         length=payload.length,
         generated_at=datetime.now(timezone.utc).isoformat(),
