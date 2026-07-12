@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  color: #191919;
+  background: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-width: 320px;
+}
+
+::selection {
+  background: #0a66c2;
+  color: #fff;
+}
+
+/* Staggered fade-in for panel load */
+@keyframes lca-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.lca-fade {
+  animation: lca-fade-in 240ms ease-out both;
+}
+
+.lca-fade-1 {
+  animation-delay: 40ms;
+}
+.lca-fade-2 {
+  animation-delay: 80ms;
+}
+.lca-fade-3 {
+  animation-delay: 120ms;
+}
+
+/* Focus rings across the panel */
+button:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+input:focus-visible {
+  outline: 2px solid #0a66c2;
+  outline-offset: 2px;
+}
+
+/* Subtle grain surface used behind hero blocks */
+.grain {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.035) 1px, transparent 1px);
+  background-size: 8px 8px;
+}

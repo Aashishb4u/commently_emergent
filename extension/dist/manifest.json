@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "LinkedIn Comment Assistant",
+  "version": "1.0.0",
+  "description": "AI-assisted, human-approved comment suggestions for LinkedIn posts. Uses your existing LinkedIn session — never asks for your password.",
+  "action": {
+    "default_title": "Open LinkedIn Comment Assistant",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "src/sidepanel/index.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "permissions": ["storage", "sidePanel", "activeTab", "scripting"],
+  "host_permissions": [
+    "https://www.linkedin.com/*",
+    "https://fa11e900-0ed5-478d-b3c5-52e75643b8b9.preview.emergentagent.com/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*", "assets/*"],
+      "matches": ["https://www.linkedin.com/*"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

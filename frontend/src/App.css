@@ -1,0 +1,7 @@
+/* Component-scoped styles for the landing page */
+.grid-bg {
+  background-image: linear-gradient(#e0dfdc 1px, transparent 1px),
+    linear-gradient(90deg, #e0dfdc 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: -1px -1px;
+}
