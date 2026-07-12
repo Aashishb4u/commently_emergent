@@ -45,11 +45,21 @@ export function SidePanel(): React.JSX.Element {
   const [isAiDraft, setIsAiDraft] = useState(false);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [showSettings, setShowSettings] = useState(false);
+  const [modelLabel, setModelLabel] = useState<string>("OpenAI");
   const commentRef = useRef<HTMLTextAreaElement>(null);
 
   // Load settings + last selected post on mount
   useEffect(() => {
-    void getSettings().then(setSettings);
+    void getSettings().then(async (s) => {
+      setSettings(s);
+      try {
+        const client = new (await import("../shared/ai-client")).AIClient(s.backendUrl);
+        const h = await client.health();
+        if (h.model_label) setModelLabel(h.model_label);
+      } catch {
+        /* backend offline — keep default label */
+      }
+    });
     void chrome.storage.session
       .get("lca.lastPost")
       .then((r) => r["lca.lastPost"] && setPost(r["lca.lastPost"] as ExtractedPost));
@@ -165,6 +175,7 @@ export function SidePanel(): React.JSX.Element {
         onToggleEnabled={() => updateSettings({ enabled: !settings.enabled })}
         onToggleSettings={() => setShowSettings((s) => !s)}
         signedIn={signedIn}
+        modelLabel={modelLabel}
       />
 
       <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-6">
@@ -281,6 +292,7 @@ function Header(props: {
   onToggleEnabled: () => void;
   onToggleSettings: () => void;
   signedIn: boolean | null;
+  modelLabel: string;
 }) {
   return (
     <header
@@ -293,8 +305,8 @@ function Header(props: {
         </div>
         <div className="min-w-0">
           <div className="font-semibold text-sm tracking-tight truncate">Comment Assistant</div>
-          <div className="text-[10px] uppercase tracking-[0.14em] text-li-muted">
-            OpenAI · GPT-5.4
+          <div className="text-[10px] uppercase tracking-[0.14em] text-li-muted" data-testid="model-label">
+            {props.modelLabel}
           </div>
         </div>
       </div>

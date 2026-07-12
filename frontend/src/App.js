@@ -179,7 +179,7 @@ function App() {
           <ol className="grid md:grid-cols-4 gap-6" data-testid="workflow-steps">
             {[
               ["Detect posts", "Content script watches the feed via a dedicated LinkedIn DOM adapter."],
-              ["Draft comment", "Backend proxies OpenAI GPT-5.4 — your API key never touches the browser."],
+              ["Draft comment", "Backend proxies the OpenAI model of your choice — your API key never touches the browser."],
               ["Review & edit", "Suggestions appear in the side panel with an AI-generated badge. Edit freely."],
               ["Approve & post", "One-click insert into LinkedIn's own reply box. You always press Post."],
             ].map(([title, body], i) => (
@@ -237,8 +237,8 @@ function App() {
       <footer className="border-t border-black/5">
         <div className="max-w-6xl mx-auto px-6 py-8 flex flex-wrap items-center justify-between gap-3 text-xs text-li-muted">
           <span>
-            Built with FastAPI + OpenAI GPT-5.4. Uses your existing LinkedIn
-            session — never stores credentials.
+            Built with FastAPI + OpenAI. Model, temperature and token limits
+            are all configurable via env variables — no code changes needed.
           </span>
           <span className="font-mono">v1.0.0</span>
         </div>

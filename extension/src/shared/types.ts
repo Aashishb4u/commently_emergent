@@ -48,7 +48,10 @@ export interface GenerateCommentResult {
 export interface HealthResult {
   status: string;
   model: string;
+  model_label: string;
   provider: string;
   ai_configured: boolean;
+  temperature: number;
+  max_tokens: Record<string, number>;
   timestamp: string;
 }

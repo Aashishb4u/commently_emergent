@@ -36,7 +36,14 @@ logger = logging.getLogger("linkedin-comment-assistant")
 MONGO_URL = os.environ["MONGO_URL"]
 DB_NAME = os.environ["DB_NAME"]
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
-OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.4")
+OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+OPENAI_MODEL_LABEL = os.environ.get("OPENAI_MODEL_LABEL", OPENAI_MODEL)
+OPENAI_TEMPERATURE = float(os.environ.get("OPENAI_TEMPERATURE", "0.7"))
+_MAX_TOKENS = {
+    "short": int(os.environ.get("OPENAI_MAX_TOKENS_SHORT", "80")),
+    "medium": int(os.environ.get("OPENAI_MAX_TOKENS_MEDIUM", "180")),
+    "long": int(os.environ.get("OPENAI_MAX_TOKENS_LONG", "320")),
+}
 ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "*")
 
 # Mongo (used only for anonymous usage counter — no PII stored)
@@ -119,8 +126,11 @@ class GenerateCommentResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: str
     model: str
+    model_label: str
     provider: str
     ai_configured: bool
+    temperature: float
+    max_tokens: dict[str, int]
     timestamp: str
 
 
@@ -130,6 +140,7 @@ class DefaultsResponse(BaseModel):
     default_tone: Tone
     default_length: Length
     model: str
+    model_label: str
     provider: str
 
 
@@ -180,8 +191,11 @@ async def health() -> HealthResponse:
     return HealthResponse(
         status="ok",
         model=OPENAI_MODEL,
+        model_label=OPENAI_MODEL_LABEL,
         provider="openai",
         ai_configured=bool(OPENAI_API_KEY and not OPENAI_API_KEY.startswith("REPLACE_")),
+        temperature=OPENAI_TEMPERATURE,
+        max_tokens=_MAX_TOKENS,
         timestamp=datetime.now(timezone.utc).isoformat(),
     )
 
@@ -194,6 +208,7 @@ async def defaults() -> DefaultsResponse:
         default_tone="professional",
         default_length="medium",
         model=OPENAI_MODEL,
+        model_label=OPENAI_MODEL_LABEL,
         provider="openai",
     )
 
@@ -205,12 +220,13 @@ async def generate_comment(payload: GenerateCommentRequest, request: Request) ->
     system_prompt = build_system_prompt(payload.tone, payload.length, payload.custom_instructions)
     user_prompt = build_user_prompt(payload.post_text, payload.author_name)
 
-    max_tokens = {"short": 80, "medium": 180, "long": 320}[payload.length]
+    max_tokens = _MAX_TOKENS[payload.length]
 
     try:
         completion = client.chat.completions.create(
             model=OPENAI_MODEL,
             max_completion_tokens=max_tokens,
+            temperature=OPENAI_TEMPERATURE,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
