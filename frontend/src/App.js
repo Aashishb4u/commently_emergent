@@ -72,11 +72,12 @@ function App() {
           <div className="flex items-center gap-3 text-xs">
             <BackendBadge health={health} />
             <a
-              href="#install"
+              href="/linkedin-comment-assistant.zip"
+              download="linkedin-comment-assistant.zip"
               className="px-3 py-1.5 rounded-full bg-li-primary text-white font-semibold hover:bg-li-primaryHover transition-colors"
               data-testid="header-install-cta"
             >
-              Install
+              Download
             </a>
           </div>
         </div>
@@ -105,19 +106,20 @@ function App() {
             </p>
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <a
-                href="#install"
+                href="/linkedin-comment-assistant.zip"
+                download="linkedin-comment-assistant.zip"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-li-primary text-white rounded-full font-semibold hover:bg-li-primaryHover transition-colors shadow-card"
                 data-testid="hero-install-cta"
               >
-                Install the extension
+                Download extension (.zip)
                 <ArrowRight className="w-4 h-4" strokeWidth={2} />
               </a>
               <a
-                href="#how"
+                href="#install"
                 className="text-sm font-semibold text-li-primary hover:underline"
                 data-testid="hero-how-link"
               >
-                How it works →
+                How to install →
               </a>
             </div>
             <div className="flex flex-wrap gap-2 pt-3" data-testid="hero-tone-chips">
@@ -212,11 +214,11 @@ function App() {
           data-testid="install-steps"
         >
           {[
-            ["Build", "Run yarn install && yarn build inside /app/extension. The build output lands in /app/extension/dist."],
+            ["Download & unzip", "Click the Download button at the top of this page to get linkedin-comment-assistant.zip, then unzip it anywhere on your computer."],
             ["Open Chrome extensions", "Go to chrome://extensions and toggle Developer mode on (top-right)."],
-            ["Load unpacked", 'Click "Load unpacked" and select the /app/extension/dist folder.'],
-            ["Configure the API key", "Open /app/backend/.env and set ANTHROPIC_API_KEY, then sudo supervisorctl restart backend."],
-            ["Use it on LinkedIn", "Sign in to LinkedIn normally, open your feed, and click ✨ next to any post — or open the side panel from the Chrome toolbar."],
+            ["Load unpacked", 'Click "Load unpacked" and select the unzipped folder (the one containing manifest.json).'],
+            ["Configure the API key", "On the sandbox, edit /app/backend/.env to set ANTHROPIC_API_KEY=sk-ant-... then run sudo supervisorctl restart backend."],
+            ["Use it on LinkedIn", "Sign in to LinkedIn normally, open your feed, and click ✦ Suggest comment next to any post — or open the side panel from the Chrome toolbar."],
           ].map(([step, body], i) => (
             <div key={step} className="flex gap-4" data-testid={`install-step-${i + 1}`}>
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-li-primary text-white font-bold text-sm flex items-center justify-center">
