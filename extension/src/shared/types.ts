@@ -1,5 +1,5 @@
 /**
- * Shared TypeScript types for the LinkedIn Comment Assistant extension.
+ * Shared TypeScript types for the Commently extension.
  */
 
 export type Tone =
@@ -27,6 +27,8 @@ export interface UserSettings {
   length: Length;
   customInstructions: string;
   backendUrl: string;
+  keywords: string;   // comma-separated raw input
+  maxPosts: number;   // safety cap per campaign run (1..10)
 }
 
 export interface GenerateCommentPayload {

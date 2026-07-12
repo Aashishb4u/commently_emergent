@@ -9,6 +9,8 @@ import {
   CheckCircle2,
   XCircle,
   Loader2,
+  Tag,
+  Sliders,
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -16,9 +18,14 @@ const API = `${BACKEND_URL}/api`;
 
 const FEATURES = [
   {
+    icon: Tag,
+    title: "Keyword-driven feed scan",
+    body: "Type the topics you want to engage with — AI, product, GTM, whatever — and Commently scrolls LinkedIn to find matching posts for you.",
+  },
+  {
     icon: Sparkles,
-    title: "Claude Sonnet 4.5",
-    body: "Context-aware suggestions that actually read the post — no generic 'Great share!' filler.",
+    title: "Model-agnostic AI",
+    body: "Powered by OpenAI (GPT-4o mini by default). Swap the model via a single env variable — no code changes.",
   },
   {
     icon: ShieldCheck,
@@ -26,14 +33,19 @@ const FEATURES = [
     body: "Never asks for your password. No cookies, tokens, or credentials are stored or transmitted.",
   },
   {
+    icon: Sliders,
+    title: "Human-in-the-loop by design",
+    body: "Comments are drafted into LinkedIn's own comment box. You still press Post yourself — nothing auto-submits.",
+  },
+  {
     icon: Zap,
-    title: "Side panel + inline button",
-    body: "Click ✨ next to any post, or open the side panel to review, edit, and approve before sending.",
+    title: "Side panel workflow",
+    body: "Set tone, length and a cap on comments per run. Watch each match land in real time.",
   },
   {
     icon: Puzzle,
     title: "Modular DOM adapter",
-    body: "LinkedIn selectors are isolated in one file — the extension survives UI changes without rewrites.",
+    body: "LinkedIn selectors are isolated in one file — Commently survives UI changes without rewrites.",
   },
 ];
 
@@ -64,16 +76,14 @@ function App() {
       >
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-li-primary text-white flex items-center justify-center font-bold text-sm">
-              in
-            </div>
-            <span className="font-semibold tracking-tight">Comment Assistant</span>
+            <img src="/commently-logo.png" alt="Commently" className="w-7 h-7 rounded-md" />
+            <span className="font-semibold tracking-tight">Commently</span>
           </div>
           <div className="flex items-center gap-3 text-xs">
             <BackendBadge health={health} />
             <a
               href="/linkedin-comment-assistant.zip"
-              download="linkedin-comment-assistant.zip"
+              download="commently-extension.zip"
               className="px-3 py-1.5 rounded-full bg-li-primary text-white font-semibold hover:bg-li-primaryHover transition-colors"
               data-testid="header-install-cta"
             >
@@ -93,33 +103,33 @@ function App() {
               data-testid="hero-badge"
             >
               <Sparkles className="w-3 h-3" strokeWidth={2} />
-              AI-assisted, human-approved
+              Type keywords · Commently drafts
             </span>
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight leading-[1.05]">
-              Write LinkedIn comments{" "}
-              <span className="text-li-primary">that actually add value.</span>
+              Comment on the LinkedIn posts{" "}
+              <span className="text-li-primary">that actually matter to you.</span>
             </h1>
             <p className="text-lg text-li-muted leading-relaxed max-w-xl">
-              A Chrome extension that reads the post you're looking at, drafts a
-              thoughtful comment in your chosen tone, and lets you review before
-              you post. No passwords. No autopilot.
+              Give Commently a few keywords. It scrolls your LinkedIn feed, finds the posts that
+              match, and drafts a thoughtful comment in your voice — right inside LinkedIn's own
+              comment box. You review and press Post.
             </p>
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <a
                 href="/linkedin-comment-assistant.zip"
-                download="linkedin-comment-assistant.zip"
+                download="commently-extension.zip"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-li-primary text-white rounded-full font-semibold hover:bg-li-primaryHover transition-colors shadow-card"
                 data-testid="hero-install-cta"
               >
-                Download extension (.zip)
+                Download Commently
                 <ArrowRight className="w-4 h-4" strokeWidth={2} />
               </a>
               <a
-                href="#install"
+                href="#how"
                 className="text-sm font-semibold text-li-primary hover:underline"
                 data-testid="hero-how-link"
               >
-                How to install →
+                How it works →
               </a>
             </div>
             <div className="flex flex-wrap gap-2 pt-3" data-testid="hero-tone-chips">
@@ -156,9 +166,7 @@ function App() {
               data-testid={`feature-${f.title.toLowerCase().replace(/\s+/g, "-")}`}
             >
               <f.icon className="w-5 h-5 text-li-primary mb-3" strokeWidth={1.5} />
-              <h3 className="font-semibold text-lg tracking-tight mb-1">
-                {f.title}
-              </h3>
+              <h3 className="font-semibold text-lg tracking-tight mb-1">{f.title}</h3>
               <p className="text-sm text-li-muted leading-relaxed">{f.body}</p>
             </div>
           ))}
@@ -173,24 +181,22 @@ function App() {
               End-to-end workflow
             </div>
             <h2 className="text-3xl font-bold tracking-tight">
-              Detect → Draft → Review → Approve.
+              Keywords → Match → Draft → Approve.
             </h2>
           </div>
           <ol className="grid md:grid-cols-4 gap-6" data-testid="workflow-steps">
             {[
-              ["Detect posts", "Content script watches the feed via a dedicated LinkedIn DOM adapter."],
-              ["Draft comment", "Backend proxies the OpenAI model of your choice — your API key never touches the browser."],
-              ["Review & edit", "Suggestions appear in the side panel with an AI-generated badge. Edit freely."],
-              ["Approve & post", "One-click insert into LinkedIn's own reply box. You always press Post."],
+              ["Set keywords", "Type the topics that matter — comma-separated — plus tone and length."],
+              ["Scan the feed", "Commently scrolls your LinkedIn feed and finds posts matching your keywords."],
+              ["Draft comments", "The OpenAI proxy generates a comment per match, opens each comment box, and inserts the draft."],
+              ["Approve & post", "You review each draft in LinkedIn's own comment box and press Post yourself."],
             ].map(([title, body], i) => (
               <li
                 key={title}
                 className="p-5 bg-white border border-li-border rounded-lg"
                 data-testid={`workflow-step-${i + 1}`}
               >
-                <div className="text-xs font-mono text-li-primary mb-2">
-                  0{i + 1}
-                </div>
+                <div className="text-xs font-mono text-li-primary mb-2">0{i + 1}</div>
                 <div className="font-semibold mb-1">{title}</div>
                 <div className="text-sm text-li-muted leading-relaxed">{body}</div>
               </li>
@@ -214,11 +220,11 @@ function App() {
           data-testid="install-steps"
         >
           {[
-            ["Download & unzip", "Click the Download button at the top of this page to get linkedin-comment-assistant.zip, then unzip it anywhere on your computer."],
+            ["Download & unzip", "Click Download above to get commently-extension.zip and unzip it anywhere on your computer."],
             ["Open Chrome extensions", "Go to chrome://extensions and toggle Developer mode on (top-right)."],
             ["Load unpacked", 'Click "Load unpacked" and select the unzipped folder (the one containing manifest.json).'],
-            ["Configure the API key", "On the sandbox, edit /app/backend/.env to set OPENAI_API_KEY=sk-... then run sudo supervisorctl restart backend."],
-            ["Use it on LinkedIn", "Sign in to LinkedIn normally, open your feed, and click ✦ Suggest comment next to any post — or open the side panel from the Chrome toolbar."],
+            ["Configure the API key", "Edit /app/backend/.env to set OPENAI_API_KEY=sk-... then run sudo supervisorctl restart backend."],
+            ["Use it on LinkedIn", "Open your LinkedIn feed → open the Commently side panel from the toolbar → type keywords → click Generate comments."],
           ].map(([step, body], i) => (
             <div key={step} className="flex gap-4" data-testid={`install-step-${i + 1}`}>
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-li-primary text-white font-bold text-sm flex items-center justify-center">
@@ -233,14 +239,13 @@ function App() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-black/5">
         <div className="max-w-6xl mx-auto px-6 py-8 flex flex-wrap items-center justify-between gap-3 text-xs text-li-muted">
           <span>
-            Built with FastAPI + OpenAI. Model, temperature and token limits
-            are all configurable via env variables — no code changes needed.
+            Commently · FastAPI + OpenAI. Model, temperature and token limits are configurable
+            via env variables — no code changes needed.
           </span>
-          <span className="font-mono">v1.0.0</span>
+          <span className="font-mono">v1.2.0</span>
         </div>
       </footer>
     </div>
@@ -265,13 +270,14 @@ function BackendBadge({ health }) {
     );
   }
   const configured = health.data?.ai_configured;
+  const modelLabel = health.data?.model_label ?? "AI";
   return (
     <span
       className={`inline-flex items-center gap-1.5 font-semibold ${configured ? "text-li-success" : "text-li-error"}`}
       data-testid="backend-status-ok"
     >
       <CheckCircle2 className="w-3 h-3" strokeWidth={2} />
-      Backend online {configured ? "· AI configured" : "· API key missing"}
+      Backend online · {configured ? modelLabel : "API key missing"}
     </span>
   );
 }
@@ -284,22 +290,21 @@ function MockPanel() {
     >
       <div className="px-4 py-3 bg-white border-b border-black/5 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-li-primary text-white flex items-center justify-center font-bold text-xs">
-            in
-          </div>
-          <span className="font-semibold text-sm">Comment Assistant</span>
+          <img src="/commently-logo.png" alt="Commently" className="w-6 h-6 rounded-md" />
+          <span className="font-semibold text-sm">Commently</span>
         </div>
         <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-li-success">
           <CheckCircle2 className="w-3 h-3" strokeWidth={2} /> Signed in
         </span>
       </div>
-      <div className="p-4 space-y-4 text-sm">
-        <div className="bg-li-bg p-3 rounded-md border border-black/5">
-          <div className="font-semibold text-li-text mb-1">Jane Doe · CTO at Northwind</div>
-          <div className="italic text-li-muted border-l-2 border-li-primary pl-2 line-clamp-3">
-            Just wrapped our zero-downtime migration to Postgres 16. Three
-            things I'd do differently next time — starting with logical
-            replication…
+      <div className="p-4 space-y-3 text-sm">
+        <div>
+          <div className="text-[10px] uppercase tracking-wider text-li-muted mb-1 font-semibold">
+            Keywords
+          </div>
+          <div className="p-2 text-xs bg-white border border-li-border rounded-md flex items-center gap-1.5">
+            <Tag className="w-3.5 h-3.5 text-li-muted" strokeWidth={2} />
+            <span>Postgres, migration, replication</span>
           </div>
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -316,23 +321,28 @@ function MockPanel() {
             </span>
           ))}
         </div>
-        <div className="relative">
-          <div className="absolute top-2 left-2 bg-li-ai/10 text-li-ai px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border border-li-ai/20">
-            AI draft
-          </div>
-          <div className="w-full min-h-[100px] p-3 pt-7 rounded-md border border-li-border bg-white text-xs text-li-text leading-relaxed">
-            The logical replication trade-off is the one that always bites
-            teams later — curious whether you kept the publication scoped to a
-            subset of tables, or ran it on the full cluster.
-          </div>
-        </div>
         <button
           type="button"
-          className="w-full py-2 bg-li-primary text-white rounded-full text-xs font-semibold hover:bg-li-primaryHover transition-colors"
           disabled
+          className="w-full py-2 bg-li-primary text-white rounded-full text-xs font-semibold flex items-center justify-center gap-1.5"
         >
-          Insert into LinkedIn
+          <Sparkles className="w-3.5 h-3.5" strokeWidth={2} />
+          Generate comments
         </button>
+        <div className="p-2 rounded-md bg-li-bg border border-black/5 text-xs">
+          <div className="font-semibold text-li-text truncate">Jane Doe</div>
+          <div className="italic text-li-muted line-clamp-2">
+            Just wrapped our zero-downtime migration to Postgres 16. Three things I'd do
+            differently next time…
+          </div>
+          <div className="mt-1.5 p-2 bg-white border border-li-border rounded text-li-text">
+            <div className="text-[9px] uppercase tracking-wider text-li-ai font-bold mb-0.5">
+              Drafted comment
+            </div>
+            The logical replication trade-off is the one that always bites teams later — curious
+            whether you kept the publication scoped to a subset of tables.
+          </div>
+        </div>
       </div>
     </div>
   );

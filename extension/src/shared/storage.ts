@@ -10,9 +10,11 @@ const DEFAULTS: UserSettings = {
   length: "medium",
   customInstructions: "",
   backendUrl: "https://fa11e900-0ed5-478d-b3c5-52e75643b8b9.preview.emergentagent.com",
+  keywords: "",
+  maxPosts: 5,
 };
 
-const KEY = "lca.settings.v1";
+const KEY = "commently.settings.v2";
 
 export async function getSettings(): Promise<UserSettings> {
   const raw = await chrome.storage.local.get(KEY);

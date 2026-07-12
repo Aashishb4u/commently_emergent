@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "LinkedIn Comment Assistant",
-  "version": "1.0.0",
-  "description": "AI-assisted, human-approved comment suggestions for LinkedIn posts. Uses your existing LinkedIn session — never asks for your password.",
+  "name": "Commently — AI comments for LinkedIn",
+  "version": "1.2.0",
+  "description": "Commently finds LinkedIn posts that match your keywords, opens each comment box, and drafts a thoughtful AI comment for you to review. Never asks for your LinkedIn password. Never auto-posts.",
   "action": {
-    "default_title": "Open LinkedIn Comment Assistant",
+    "default_title": "Open Commently",
     "default_icon": {
       "16": "icons/icon-16.png",
       "48": "icons/icon-48.png",
